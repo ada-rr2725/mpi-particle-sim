@@ -1,4 +1,5 @@
 #include "particle.h"
+#include <cstdlib>
 
 MPI_Datatype CParticle::MPI_type;
 CParticle* CParticle::start = nullptr;
@@ -12,6 +13,14 @@ CParticle::CParticle()
 }
 
 CParticle::~CParticle() {}
+
+void CParticle::setup_random()
+{
+    x[0] = x_max * static_cast<double>(rand()) / RAND_MAX;
+    x[1] = y_max * static_cast<double>(rand()) / RAND_MAX;
+    v[0] = 2.0 * (static_cast<double>(rand()) / RAND_MAX - 0.5);
+    v[1] = 2.0 * (static_cast<double>(rand()) / RAND_MAX - 0.5);
+}
 
 void CParticle::create_datatype()
 {
