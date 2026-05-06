@@ -17,6 +17,7 @@ public:
     CParticle* next, * prev;
 
     void setup_random();
+    void timestep(double dt);
 
     static MPI_Datatype MPI_type;
     static void create_datatype();

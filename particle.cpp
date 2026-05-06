@@ -22,6 +22,19 @@ void CParticle::setup_random()
     v[1] = 2.0 * (static_cast<double>(rand()) / RAND_MAX - 0.5);
 }
 
+void CParticle::timestep(double dt)
+{
+    v[1] -= gravity * dt;
+
+    x[0] += v[0] * dt;
+    x[1] += v[1] * dt;
+
+    if (x[1] < 0.0)   { x[1] = -x[1];              v[1] = -v[1]; }
+    if (x[1] > y_max) { x[1] = 2.0 * y_max - x[1]; v[1] = -v[1]; }
+    if (x[0] < 0.0)   { x[0] = -x[0];              v[0] = -v[0]; }
+    if (x[0] > x_max) { x[0] = 2.0 * x_max - x[0]; v[0] = -v[0]; }
+}
+
 void CParticle::create_datatype()
 {
     MPI_Aint displacements[2];
