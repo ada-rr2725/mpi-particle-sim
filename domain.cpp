@@ -35,10 +35,13 @@ void distribute_initial(int id, int p)
 
             if (dest == 0)
             {
-                current->next = self_list;
-                if (self_list != nullptr) self_list->prev = current;
-                current->prev = nullptr;
-                self_list = current;
+                CParticle* copy = new CParticle;
+                copy->v[0] = current->v[0]; copy->v[1] = current->v[1];
+                copy->x[0] = current->x[0]; copy->x[1] = current->x[1];
+                copy->next = self_list;
+                copy->prev = nullptr;
+                if (self_list != nullptr) self_list->prev = copy;
+                self_list = copy;
             }
             else
             {
