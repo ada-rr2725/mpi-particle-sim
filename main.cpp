@@ -36,7 +36,16 @@ int main(int argc, char* argv[])
             write_particles(id, step);
     }
 
+    int local_count = 0;
     CParticle* current = CParticle::start;
+    while (current != nullptr) { local_count++; current = current->next; }
+
+    int global_count = 0;
+    MPI_Reduce(&local_count, &global_count, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    if (id == 0)
+        cout << "total particles: " << global_count << " (expected " << max_particles << ")" << endl;
+
+    current = CParticle::start;
     while (current != nullptr)
     {
         CParticle* next = current->next;
