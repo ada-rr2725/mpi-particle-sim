@@ -121,4 +121,37 @@ void migrate_particles(int id, int p)
 
     MPI_Alltoall(send_counts.data(), 1, MPI_INT,
                  recv_counts.data(), 1, MPI_INT, MPI_COMM_WORLD);
+
+    vector<MPI_Request> requests;
+    for (int r = 0; r < p; r++)
+    {
+        if (r == id || send_counts[r] == 0) continue;
+        MPI_Request req;
+        MPI_Isend(staging[r].data(), send_counts[r], CParticle::MPI_type,
+                  r, 0, MPI_COMM_WORLD, &req);
+        requests.push_back(req);
+    }
+
+    for (int r = 0; r < p; r++)
+    {
+        if (r == id || recv_counts[r] == 0) continue;
+
+        vector<CParticle> recv_buf(recv_counts[r]);
+        MPI_Recv(recv_buf.data(), recv_counts[r], CParticle::MPI_type,
+                 r, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+        for (int i = 0; i < recv_counts[r]; i++)
+        {
+            CParticle* node = new CParticle;
+            node->v[0] = recv_buf[i].v[0]; node->v[1] = recv_buf[i].v[1];
+            node->x[0] = recv_buf[i].x[0]; node->x[1] = recv_buf[i].x[1];
+            node->next = CParticle::start;
+            node->prev = nullptr;
+            if (CParticle::start != nullptr) CParticle::start->prev = node;
+            CParticle::start = node;
+        }
+    }
+
+    if (!requests.empty())
+        MPI_Waitall(static_cast<int>(requests.size()), requests.data(), MPI_STATUSES_IGNORE);
 }
