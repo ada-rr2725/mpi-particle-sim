@@ -1,5 +1,7 @@
 #include "domain.h"
 #include <vector>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
@@ -154,4 +156,18 @@ void migrate_particles(int id, int p)
 
     if (!requests.empty())
         MPI_Waitall(static_cast<int>(requests.size()), requests.data(), MPI_STATUSES_IGNORE);
+}
+
+void write_particles(int id, int step)
+{
+    string fname = "particles_p" + to_string(id) + "_t" + to_string(step) + ".dat";
+    ofstream f(fname);
+
+    CParticle* current = CParticle::start;
+    while (current != nullptr)
+    {
+        f << current->x[0] << " " << current->x[1] << " "
+          << current->v[0] << " " << current->v[1] << "\n";
+        current = current->next;
+    }
 }
