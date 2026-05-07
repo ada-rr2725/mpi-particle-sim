@@ -1,6 +1,8 @@
 # mpi-particle-sim
 
-2D lagrangian particle simulation using MPI domain decomposition. 10,000 particles distributed across vertical stripes (one per rank), subject to gravity and elastic wall bouncing. particles crossing stripe boundaries are migrated to the correct rank each timestep using MPI_Alltoall for count exchange and non-blocking sends for bulk transfer.
+![demo](demo.gif)
+
+MPI-decomposed 2D particle simulation with gravity, elastic wall bouncing, and per-timestep rank migration via MPI_Alltoall.
 
 ## build
 

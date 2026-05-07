@@ -2,3 +2,4 @@ mpi-particle-sim
 *.o
 *.dSYM
 particles_p*.dat
+make_gif.py
